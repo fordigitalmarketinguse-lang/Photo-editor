@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Photo Editor Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c63ff;
+            --secondary-color: #ff6584;
+            --accent-color: #42b883;
+            --dark-color: #2a2a4a;
+            --light-color: #f8f9fa;
+            --gray-color: #f0f0f0;
+            --text-color: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #555;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            background-color: #554fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+        }
+        
+        /* Editor Section */
+        .editor-section {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .editor-main {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .image-preview {
+            flex: 1;
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .preview-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .editor-controls {
+            flex: 1;
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            font-size: 1.1rem;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .slider-container label {
+            min-width: 100px;
+            font-size: 0.9rem;
+        }
+        
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            outline: none;
+            border-radius: 5px;
+        }
+        
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            min-width: 30px;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        
+        .background-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .bg-option {
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .bg-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .bg-option.selected {
+            border-color: var(--primary-color);
+            border-width: 3px;
+        }
+        
+        .bg-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .bg-option .bg-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px;
+            text-align: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .action-button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background-color: #554fd8;
+        }
+        
+        .secondary-btn {
+            background-color: var(--gray-color);
+            color: var(--text-color);
+        }
+        
+        .secondary-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* Results Section */
+        .results-section {
+            padding: 60px 0;
+            background-color: var(--gray-color);
+            display: none;
+        }
+        
+        .results-container h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--dark-color);
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .result-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .result-image {
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .result-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .result-card:hover .result-image img {
+            transform: scale(1.05);
+        }
+        
+        .result-info {
+            padding: 20px;
+        }
+        
+        .result-info h3 {
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .result-info p {
+            color: #777;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .download-btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .download-btn:hover {
+            background-color: #554fd8;
+        }
+        
+        /* Upload Section */
+        .upload-section {
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .upload-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #d1d1d6;
+            border-radius: 12px;
+            padding: 40px 20px;
+            margin: 30px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(108, 99, 255, 0.03);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .upload-area p {
+            color: #777;
+        }
+        
+        #image-input {
+            display: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .editor-main {
+                flex-direction: column;
+            }
+            
+            .background-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .upload-container {
+                padding: 20px;
+            }
+            
+            .background-options {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-camera-retro"></i>
+                    Photo Editor Pro
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#upload">Edit</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-to-use">How to Use</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Advanced Photo Editing Made Simple</h1>
+            <p>Upload your photo and get three professionally edited versions with automatic enhancements and background replacement.</p>
+            <a href="#upload" class="cta-button">Start Editing Now</a>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="upload-section">
+        <div class="container">
+            <div class="upload-container">
+                <h2>Upload Your Photo</h2>
+                <p>Simply upload your image, and our AI will help you create amazing edits</p>
+                
+                <div class="upload-area" id="drop-zone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Drag & Drop Your Image Here</h3>
+                    <p>or click to browse your files</p>
+                    <input type="file" id="image-input" accept="image/*">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Editor Section -->
+    <section class="editor-section" id="editor">
+        <div class="container editor-container">
+            <h2>Edit Your Photo</h2>
+            
+            <div class="editor-main">
+                <div class="image-preview">
+                    <div class="preview-container">
+                        <img id="preview-image" src="" alt="Your photo">
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-button secondary-btn" id="reset-btn">Reset</button>
+                        <button class="action-button primary-btn" id="auto-enhance-btn">Auto Enhance</button>
+                    </div>
+                </div>
+                
+                <div class="editor-controls">
+                    <div class="control-group">
+                        <h3>Basic Adjustments</h3>
+                        
+                        <div class="slider-container">
+                            <label for="brightness">Brightness</label>
+                            <input type="range" id="brightness" min="-100" max="100" value="0">
+                            <span class="slider-value" id="brightness-value">0</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="contrast">Contrast</label>
+                            <input type="range" id="contrast" min="-100" max="100" value="0">
+                            <span class="slider-value" id="contrast-value">0</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="saturation">Saturation</label>
+                            <input type="range" id="saturation" min="-100" max="100" value="0">
+                            <span class="slider-value" id="saturation-value">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>Advanced Adjustments</h3>
+                        
+                        <div class="slider-container">
+                            <label for="exposure">Exposure</label>
+                            <input type="range" id="exposure" min="-100" max="100" value="0">
+                            <span class="slider-value" id="exposure-value">0</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="highlights">Highlights</label>
+                            <input type="range" id="highlights" min="0" max="100" value="0">
+                            <span class="slider-value" id="highlights-value">0</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label for="shadows">Shadows</label>
+                            <input type="range" id="shadows" min="0" max="100" value="0">
+                            <span class="slider-value" id="shadows-value">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>Background Replacement</h3>
+                        <p>Select a background to replace the current one</p>
+                        
+                        <div class="background-options">
+                            <div class="bg-option" data-bg="beach">
+                                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Beach">
+                                <div class="bg-name">Beach</div>
+                            </div>
+                            <div class="bg-option" data-bg="city">
+                                <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="City">
+                                <div class="bg-name">City</div>
+                            </div>
+                            <div class="bg-option" data-bg="nature">
+                                <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Nature">
+                                <div class="bg-name">Nature</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="action-button secondary-btn" id="cancel-btn">Cancel</button>
+                        <button class="action-button primary-btn" id="generate-btn">Generate Results</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section" id="results">
+        <div class="container results-container">
+            <h2>Your Enhanced Photos</h2>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-image">
+                        <img src="" alt="Enhanced Photo 1" id="result-1">
+                    </div>
+                    <div class="result-info">
+                        <h3>Vibrant Pro</h3>
+                        <p>Enhanced colors, perfect for social media and nature photography</p>
+                        <button class="download-btn" data-img="result-1">Download</button>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-image">
+                        <img src="" alt="Enhanced Photo 2" id="result-2">
+                    </div>
+                    <div class="result-info">
+                        <h3>Portrait Perfect</h3>
+                        <p>Skin smoothing, eye enhancement, and professional portrait tuning</p>
+                        <button class="download-btn" data-img="result-2">Download</button>
+                    </div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-image">
+                        <img src="" alt="Enhanced Photo 3" id="result-3">
+                    </div>
+                    <div class="result-info">
+                        <h3>Background Replaced</h3>
+                        <p>AI background replacement with a complementary scene</p>
+                        <button class="download-btn" data-img="result-3">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // DOM Elements
+        const imageInput = document.getElementById('image-input');
+        const dropZone = document.getElementById('drop-zone');
+        const editorSection = document.querySelector('.editor-section');
+        const resultsSection = document.querySelector('.results-section');
+        const previewImage = document.getElementById('preview-image');
+        const resultImages = [
+            document.getElementById('result-1'),
+            document.getElementById('result-2'),
+            document.getElementById('result-3')
+        ];
+        const downloadButtons = document.querySelectorAll('.download-btn');
+        const sliders = document.querySelectorAll('input[type="range"]');
+        const bgOptions = document.querySelectorAll('.bg-option');
+        
+        // Event Listeners
+        dropZone.addEventListener('click', () => {
+            imageInput.click();
+        });
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#6c63ff';
+            dropZone.style.backgroundColor = 'rgba(108, 99, 255, 0.1)';
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#d1d1d6';
+            dropZone.style.backgroundColor = 'transparent';
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#d1d1d6';
+            dropZone.style.backgroundColor = 'transparent';
+            
+            if (e.dataTransfer.files.length) {
+                processImage(e.dataTransfer.files[0]);
+            }
+        });
+        
+        imageInput.addEventListener('change', () => {
+            if (imageInput.files.length) {
+                processImage(imageInput.files[0]);
+            }
+        });
+        
+        // Initialize sliders with values
+        sliders.forEach(slider => {
+            const valueDisplay = document.getElementById(`${slider.id}-value`);
+            valueDisplay.textContent = slider.value;
+            
+            slider.addEventListener('input', () => {
+                valueDisplay.textContent = slider.value;
+                applyFilters();
+            });
+        });
+        
+        // Background selection
+        bgOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                bgOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+        
+        // Button events
+        document.getElementById('reset-btn').addEventListener('click', resetSliders);
+        document.getElementById('auto-enhance-btn').addEventListener('click', autoEnhance);
+        document.getElementById('cancel-btn').addEventListener('click', cancelEdit);
+        document.getElementById('generate-btn').addEventListener('click', generateResults);
+        
+        // Download buttons
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const imgId = button.getAttribute('data-img');
+                const imgSrc = document.getElementById(imgId).src;
+                downloadImage(imgSrc, `edited-photo-${imgId}.jpg`);
+            });
+        });
+        
+        // Functions
+        function processImage(file) {
+            if (!file.type.match('image.*')) {
+                alert('Please upload an image file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                editorSection.style.display = 'block';
+                window.location.href = '#editor';
+                
+                // Reset all sliders
+                resetSliders();
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        function applyFilters() {
+            // In a real application, this would apply filters to the image
+            // For this demo, we'll just update a data attribute
+            const filters = {
+                brightness: document.getElementById('brightness').value,
+                contrast: document.getElementById('contrast').value,
+                saturation: document.getElementById('saturation').value,
+                exposure: document.getElementById('exposure').value,
+                highlights: document.getElementById('highlights').value,
+                shadows: document.getElementById('shadows').value
+            };
+            
+            previewImage.setAttribute('data-filters', JSON.stringify(filters));
+        }
+        
+        function resetSliders() {
+            sliders.forEach(slider => {
+                slider.value = 0;
+                document.getElementById(`${slider.id}-value`).textContent = '0';
+            });
+            
+            bgOptions.forEach(opt => opt.classList.remove('selected'));
+            applyFilters();
+        }
+        
+        function autoEnhance() {
+            // Simulate auto-enhance by setting specific values
+            document.getElementById('brightness').value = 15;
+            document.getElementById('contrast').value = 20;
+            document.getElementById('saturation').value = 25;
+            document.getElementById('exposure').value = 10;
+            document.getElementById('highlights').value = 15;
+            document.getElementById('shadows').value = 20;
+            
+            // Update display values
+            sliders.forEach(slider => {
+                document.getElementById(`${slider.id}-value`).textContent = slider.value;
+            });
+            
+            applyFilters();
+        }
+        
+        function cancelEdit() {
+            editorSection.style.display = 'none';
+        }
+        
+        function generateResults() {
+            // Show processing indicator
+            const generateBtn = document.getElementById('generate-btn');
+            const originalText = generateBtn.textContent;
+            generateBtn.textContent = 'Processing...';
+            generateBtn.disabled = true;
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                // Create different versions of the image
+                const originalSrc = previewImage.src;
+                
+                // In a real app, this would apply actual filters
+                // For demo, we'll use the same image but simulate different edits
+                resultImages[0].src = originalSrc;
+                resultImages[1].src = originalSrc;
+                resultImages[2].src = originalSrc;
+                
+                // Show results section
+                resultsSection.style.display = 'block';
+                window.location.href = '#results';
+                
+                // Reset button
+                generateBtn.textContent = originalText;
+                generateBtn.disabled = false;
+            }, 2000);
+        }
+        
+        function downloadImage(dataUrl, filename) {
+            // Create a temporary link for downloading
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+  </html>
